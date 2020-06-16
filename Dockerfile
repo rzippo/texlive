@@ -34,6 +34,8 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     apt-get install -y fontconfig && \
     # required by tlmgr init-usertree
     apt-get install -y xzdec && \
+    # required by drawio
+    apt-get install -y libnotify4 libxss1 libnss3 libappindicator3-1 libsecret-1-0 libasound2 xdg-utils xvfb && \
     # save some space
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
@@ -87,3 +89,14 @@ RUN mkdir /root/.texlive2019 && perl `kpsewhich -var-value TEXMFDIST`/scripts/pa
 
 # install pkgcheck
 RUN wget https://gitlab.com/Lotz/pkgcheck/raw/master/bin/pkgcheck -q --output-document=/usr/local/bin/pkgcheck && chmod a+x /usr/local/bin/pkgcheck
+
+# install drawio
+
+RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v13.0.3/draw.io-amd64-13.0.3.deb && \
+    dpkg -i draw.io-amd64-13.0.3.deb && \
+    rm draw.io-amd64-13.0.3.deb
+
+RUN chmod +4755 /opt/draw.io/chrome-sandbox
+
+RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
+    chmod +x /usr/local/bin/drawio
