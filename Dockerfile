@@ -1,4 +1,4 @@
-FROM debian:unstable
+FROM debian:buster
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     TERM=dumb
@@ -18,7 +18,7 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     # proposal by https://github.com/sumandoc/TeXLive-2017
     apt-get install -y wget curl libgetopt-long-descriptive-perl libdigest-perl-md5-perl fontconfig && \
     # libfile-copy-recursive-perl is required by ctanify
-    apt-get install -y --no-install-recommends openjdk-8-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
+    apt-get install -y --no-install-recommends openjdk-11-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
     apt-get install -y ruby poppler-utils && \
     # for plantuml, we need graphviz and inkscape. For inkscape, there is no non-X11 version, so 200 MB more
     apt-get install -y --no-install-recommends graphviz inkscape && \
