@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     TERM=dumb
@@ -23,7 +23,7 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     # for plantuml, we need graphviz and inkscape. For inkscape, there is no non-X11 version, so 200 MB more
     apt-get install -y --no-install-recommends graphviz inkscape && \
     # add support for pygments
-    apt-get install -y python3-pygments python3-pip && \
+    apt-get install -y python3-pygments python3-pip zlib1g && \
     # fig2dev - tool for xfig to translate the figure to other formats
     apt-get install -y fig2dev && \
     # pandoc - to convert to latex
@@ -48,9 +48,9 @@ RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
     cd install-tl && \
     ./install-tl -profile=../texlive.profile
 
-ENV MANPATH="/usr/local/texlive/2019/texmf-dist/doc/man:${MANPATH}"
-ENV INFOPATH="/usr/local/texlive/2019/texmf-dist/doc/info:${INFOPATH}"
-ENV PATH="/usr/local/texlive/2019/bin/x86_64-linux:${PATH}"
+ENV MANPATH="/usr/local/texlive/2022/texmf-dist/doc/man:${MANPATH}"
+ENV INFOPATH="/usr/local/texlive/2022/texmf-dist/doc/info:${INFOPATH}"
+ENV PATH="/usr/local/texlive/2022/bin/x86_64-linux:${PATH}"
 
 # update texlive
 # works if no new major release of texlive was done
@@ -85,14 +85,14 @@ RUN gem install bundler
 RUN pip3 install pyparsing && pip3 install docx
 
 # prepare usage of pax
-RUN mkdir /root/.texlive2019 && perl `kpsewhich -var-value TEXMFDIST`/scripts/pax/pdfannotextractor.pl --install
+RUN mkdir /root/.texlive2022 && perl `kpsewhich -var-value TEXMFDIST`/scripts/pax/pdfannotextractor.pl --install
 
 # install pkgcheck
 RUN wget https://gitlab.com/Lotz/pkgcheck/raw/master/bin/pkgcheck -q --output-document=/usr/local/bin/pkgcheck && chmod a+x /usr/local/bin/pkgcheck
 
 # install drawio
 
-ARG drawio_ver="14.1.8"
+ARG drawio_ver="20.7.4"
 
 RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/draw.io-amd64-$drawio_ver.deb && \
     dpkg -i draw.io-amd64-$drawio_ver.deb && \
