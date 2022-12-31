@@ -85,7 +85,7 @@ RUN gem install bundler
 RUN pip3 install pyparsing && pip3 install docx
 
 # prepare usage of pax
-RUN mkdir /root/.texlive2022 && perl `kpsewhich -var-value TEXMFDIST`/scripts/pax/pdfannotextractor.pl --install
+# RUN mkdir /root/.texlive2022 && perl `kpsewhich -var-value TEXMFDIST`/scripts/pax/pdfannotextractor.pl --install
 
 # install pkgcheck
 RUN wget https://gitlab.com/Lotz/pkgcheck/raw/master/bin/pkgcheck -q --output-document=/usr/local/bin/pkgcheck && chmod a+x /usr/local/bin/pkgcheck
@@ -94,11 +94,11 @@ RUN wget https://gitlab.com/Lotz/pkgcheck/raw/master/bin/pkgcheck -q --output-do
 
 ARG drawio_ver="20.7.4"
 
-RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/draw.io-amd64-$drawio_ver.deb && \
-    dpkg -i draw.io-amd64-$drawio_ver.deb && \
-    rm draw.io-amd64-$drawio_ver.deb
+RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/drawio-amd64-$drawio_ver.deb && \
+    dpkg -i drawio-amd64-$drawio_ver.deb && \
+    rm drawio-amd64-$drawio_ver.deb
 
-RUN chmod +4755 /opt/draw.io/chrome-sandbox
+RUN chmod +4755 /opt/drawio/chrome-sandbox
 
 RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
     chmod +x /usr/local/bin/drawio
