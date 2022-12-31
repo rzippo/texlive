@@ -43,7 +43,7 @@ WORKDIR /home
 
 ADD ./texlive.profile texlive.profile
 
-RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
+RUN wget https://mirrors.mit.edu/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz && \
     mkdir install-tl && tar xf install-tl-unx.tar.gz -C install-tl --strip-components 1 && \ 
     cd install-tl && \
     ./install-tl -profile=../texlive.profile
