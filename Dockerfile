@@ -62,6 +62,12 @@ RUN wget https://mirrors.mit.edu/CTAN/systems/texlive/tlnet/install-tl-unx.tar.g
     cd install-tl && \
     ./install-tl -profile=../texlive.profile
 
+## cleanup
+RUN rm -r ./install-tl && \
+    rm -r ./texlive && \
+    rm ./install-tl-unx.tar.gz && \
+    rm ./texlive.profile
+
 ENV MANPATH="/usr/local/texlive/texmf-dist/doc/man:${MANPATH}"
 ENV INFOPATH="/usr/local/texlive/texmf-dist/doc/info:${INFOPATH}"
 ENV PATH="/usr/local/texlive/bin/x86_64-linux:${PATH}"
@@ -79,8 +85,10 @@ RUN tlmgr update --self --all --reinstall-forcibly-removed
 ARG drawio_ver="20.7.4"
 
 RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/drawio-amd64-$drawio_ver.deb && \
-    dpkg -i drawio-amd64-$drawio_ver.deb && \
-    rm drawio-amd64-$drawio_ver.deb
+    dpkg -i drawio-amd64-$drawio_ver.deb
+    
+## cleanup
+RUN rm drawio-amd64-$drawio_ver.deb
 
 RUN chmod +4755 /opt/drawio/chrome-sandbox
 
