@@ -96,3 +96,5 @@ RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio
 
 # Set the default user as non-root
 USER $USERNAME
+
+RUN tlmgr init-usertree
