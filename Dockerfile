@@ -64,7 +64,6 @@ RUN wget https://mirrors.mit.edu/CTAN/systems/texlive/tlnet/install-tl-unx.tar.g
 
 ## cleanup
 RUN rm -r ./install-tl && \
-    rm -r ./texlive && \
     rm ./install-tl-unx.tar.gz && \
     rm ./texlive.profile
 
