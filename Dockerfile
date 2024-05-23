@@ -27,7 +27,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # See https://github.com/debuerreotype/docker-debian-artifacts/issues/24#issuecomment-360870939
 RUN mkdir -p /usr/share/man/man1
 
-# we additionally need python, java (because of pax), perl (because of pax), pdftk, ghostscript, and unzip (because of pax)
 RUN apt-get update -qq && apt-get upgrade -qq && \
     # proposal by https://github.com/sumandoc/TeXLive-2017
     apt-get install -y wget curl libgetopt-long-descriptive-perl libdigest-perl-md5-perl fontconfig && \
@@ -93,6 +92,13 @@ RUN chmod +4755 /opt/drawio/chrome-sandbox
 
 RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
     chmod +x /usr/local/bin/drawio
+
+# Add powershell 7.4, using deb package
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.2/powershell_7.4.2-1.deb_amd64.deb && \
+    dpkg -i powershell_7.4.2-1.deb_amd64.deb
+
+## Cleanup
+RUN rm powershell_7.4.2-1.deb_amd64.deb
 
 # Set the default user as non-root
 USER $USERNAME
