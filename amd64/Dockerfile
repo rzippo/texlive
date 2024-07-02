@@ -1,11 +1,11 @@
-FROM debian:bullseye
+FROM --platform=amd64 debian:bookworm
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     TERM=dumb
 
 # avoid debconf and initrd
-ENV DEBIAN_FRONTEND noninteractive
-ENV INITRD No
+ENV DEBIAN_FRONTEND=noninteractive
+ENV INITRD=No
 
 ARG BUILD_DATE
 
@@ -31,7 +31,7 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     # proposal by https://github.com/sumandoc/TeXLive-2017
     apt-get install -y wget curl libgetopt-long-descriptive-perl libdigest-perl-md5-perl fontconfig && \
     # libfile-copy-recursive-perl is required by ctanify
-    apt-get install -y --no-install-recommends openjdk-11-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
+    apt-get install -y --no-install-recommends openjdk-17-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
     apt-get install -y ruby poppler-utils && \
     # for plantuml, we need graphviz and inkscape. For inkscape, there is no non-X11 version, so 200 MB more
     apt-get install -y --no-install-recommends graphviz inkscape && \
@@ -40,7 +40,7 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     # fig2dev - tool for xfig to translate the figure to other formats
     apt-get install -y fig2dev && \
     # pandoc - to convert to latex
-    apt-get install -y pandoc pandoc-citeproc && \
+    apt-get install -y pandoc && \
     # add Google's Inconsolata font (https://fonts.google.com/specimen/Inconsolata)
     apt-get install -y fonts-inconsolata && \
     # required by tlmgr init-usertree
