@@ -6,7 +6,7 @@ TEXMFLOCAL /usr/local/texlive/texmf-local
 TEXMFSYSCONFIG /usr/local/texlive/texmf-config
 TEXMFSYSVAR /usr/local/texlive/texmf-var
 TEXMFVAR ~/.texlive/texmf-var
-binary_x86_64-linux 1
+binary_aarch64-linux 1
 instopt_adjustpath 0
 instopt_adjustrepo 1
 instopt_letter 0

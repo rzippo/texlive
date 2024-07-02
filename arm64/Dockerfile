@@ -1,4 +1,4 @@
-FROM --platform=amd64 debian:bookworm
+FROM --platform=arm64 debian:bookworm
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     TERM=dumb
@@ -68,7 +68,7 @@ RUN rm -r ./install-tl && \
 
 ENV MANPATH="/usr/local/texlive/texmf-dist/doc/man:${MANPATH}"
 ENV INFOPATH="/usr/local/texlive/texmf-dist/doc/info:${INFOPATH}"
-ENV PATH="/usr/local/texlive/bin/x86_64-linux:${PATH}"
+ENV PATH="/usr/local/texlive/bin/aarch64-linux:${PATH}"
 
 # update texlive
 # works if no new major release of texlive was done
@@ -80,25 +80,32 @@ RUN tlmgr update --self --all --reinstall-forcibly-removed
 
 # install drawio
 
-ARG drawio_ver="20.7.4"
+ARG drawio_ver="24.6.4"
 
-RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/drawio-amd64-$drawio_ver.deb && \
-    dpkg -i drawio-amd64-$drawio_ver.deb
+RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/drawio-arm64-${drawio_ver}.deb && \
+    dpkg -i drawio-arm64-$drawio_ver.deb
     
 ## cleanup
-RUN rm drawio-amd64-$drawio_ver.deb
+RUN rm drawio-arm64-$drawio_ver.deb
 
 RUN chmod +4755 /opt/drawio/chrome-sandbox
 
 RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
     chmod +x /usr/local/bin/drawio
 
-# Add powershell 7.4, using deb package
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.2/powershell_7.4.2-1.deb_amd64.deb && \
-    dpkg -i powershell_7.4.2-1.deb_amd64.deb
+# Add powershell 7.4, using binary archive
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.3/powershell-7.4.3-linux-arm64.tar.gz && \
+    # Create the target folder where powershell will be placed
+    mkdir -p /opt/microsoft/powershell/7 && \
+    # Expand powershell to the target folder
+    tar zxf powershell-7.4.3-linux-arm64.tar.gz -C /opt/microsoft/powershell/7 && \
+    # Set execute permissions
+    chmod +x /opt/microsoft/powershell/7/pwsh && \
+    # Create the symbolic link that points to pwsh
+    ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
 
 ## Cleanup
-RUN rm powershell_7.4.2-1.deb_amd64.deb
+RUN rm powershell-7.4.3-linux-arm64.tar.gz
 
 # Set the default user as non-root
 USER $USERNAME
