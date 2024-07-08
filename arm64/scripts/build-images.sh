@@ -1,6 +1,7 @@
 #!/bin/sh
+tag=$(cat ../../CURRENT_TAG)
 
-docker build .. --platform linux/arm64 --file ../Dockerfile-arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-basic.profile" --tag rzippo/texlive-basic:july-2024;
-docker build .. --platform linux/arm64 --file ../Dockerfile-arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-small.profile" --tag rzippo/texlive-small:july-2024;
-docker build .. --platform linux/arm64 --file ../Dockerfile-arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-medium.profile" --tag rzippo/texlive-medium:july-2024;
-docker build .. --platform linux/arm64 --file ../Dockerfile-arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-full.profile" --tag rzippo/texlive-full:july-2024 --no-cache;
+docker build .. --platform linux/arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-basic.profile" --tag rzippo/texlive-basic-arm64:$tag;
+docker build .. --platform linux/arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-small.profile" --tag rzippo/texlive-small-arm64:$tag;
+docker build .. --platform linux/arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-medium.profile" --tag rzippo/texlive-medium-arm64:$tag;
+docker build .. --platform linux/arm64 --build-arg="TEXLIVE_PROFILE=./profiles/texlive-full.profile" --tag rzippo/texlive-full-arm64:$tag --no-cache;

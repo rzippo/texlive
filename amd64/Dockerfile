@@ -82,11 +82,11 @@ RUN tlmgr update --self --all --reinstall-forcibly-removed
 
 ARG drawio_ver="20.7.4"
 
-RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v$drawio_ver/drawio-amd64-$drawio_ver.deb && \
-    dpkg -i drawio-amd64-$drawio_ver.deb
+RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/drawio-amd64-${drawio_ver}.deb && \
+    dpkg -i drawio-amd64-${drawio_ver}.deb
     
 ## cleanup
-RUN rm drawio-amd64-$drawio_ver.deb
+RUN rm drawio-amd64-${drawio_ver}.deb
 
 RUN chmod +4755 /opt/drawio/chrome-sandbox
 

@@ -1,16 +1,16 @@
 #!/bin/sh
 
 # requires docker login beforehand
-tag=$(cat CURRENT_TAG)
+tag=$(cat ../../CURRENT_TAG)
 
-docker push rzippo/texlive-basic:$tag;
-docker push rzippo/texlive-basic:latest;
+docker push rzippo/texlive-basic-amd64:$tag;
+docker push rzippo/texlive-basic-amd64:latest;
 
-docker push rzippo/texlive-small:$tag;
-docker push rzippo/texlive-small:latest;
+docker push rzippo/texlive-small-amd64:$tag;
+docker push rzippo/texlive-small-amd64:latest;
 
-docker push rzippo/texlive-medium:$tag;
-docker push rzippo/texlive-medium:latest;
+docker push rzippo/texlive-medium-amd64:$tag;
+docker push rzippo/texlive-medium-amd64:latest;
 
-docker push rzippo/texlive-full:$tag;
-docker push rzippo/texlive-full:latest;
+docker push rzippo/texlive-full-amd64:$tag;
+docker push rzippo/texlive-full-amd64:latest;
