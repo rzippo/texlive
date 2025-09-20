@@ -1,4 +1,4 @@
-FROM --platform=amd64 debian:bookworm
+FROM --platform=amd64 debian:trixie
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     TERM=dumb
@@ -27,11 +27,12 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # See https://github.com/debuerreotype/docker-debian-artifacts/issues/24#issuecomment-360870939
 RUN mkdir -p /usr/share/man/man1
 
+RUN echo "deb http://deb.debian.org/debian trixie contrib non-free" > /etc/apt/sources.list.d/contrib.list
 RUN apt-get update -qq && apt-get upgrade -qq && \
     # proposal by https://github.com/sumandoc/TeXLive-2017
     apt-get install -y wget curl libgetopt-long-descriptive-perl libdigest-perl-md5-perl fontconfig && \
     # libfile-copy-recursive-perl is required by ctanify
-    apt-get install -y --no-install-recommends openjdk-17-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
+    apt-get install -y --no-install-recommends openjdk-21-jre-headless libfile-which-perl libfile-copy-recursive-perl pdftk ghostscript unzip openssh-client git && \
     apt-get install -y ruby poppler-utils && \
     # for plantuml, we need graphviz and inkscape. For inkscape, there is no non-X11 version, so 200 MB more
     apt-get install -y --no-install-recommends graphviz inkscape && \
@@ -41,17 +42,54 @@ RUN apt-get update -qq && apt-get upgrade -qq && \
     apt-get install -y fig2dev && \
     # pandoc - to convert to latex
     apt-get install -y pandoc && \
-    # add Google's Inconsolata font (https://fonts.google.com/specimen/Inconsolata)
-    apt-get install -y fonts-inconsolata && \
+    # fonts
+    apt-get install -y fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer && \
     # required by tlmgr init-usertree
     apt-get install -y xzdec && \
     # required by drawio
     apt-get install -y libnotify4 libxss1 libnss3 libgbm1 libappindicator3-1 libsecret-1-0 libasound2 xdg-utils xvfb && \
+    # required by Powershell
+    apt-get install -y libicu76 && \
     # save some space
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
 WORKDIR /home
 
+# install drawio
+
+ARG drawio_ver="20.7.4"
+
+RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/drawio-amd64-${drawio_ver}.deb && \
+    dpkg -i drawio-amd64-${drawio_ver}.deb
+    
+## cleanup
+RUN rm drawio-amd64-${drawio_ver}.deb
+
+RUN chmod +4755 /opt/drawio/chrome-sandbox
+
+RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
+    chmod +x /usr/local/bin/drawio
+
+# Add powershell 7.5.2-1, using deb package
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/powershell_7.5.2-1.deb_amd64.deb && \
+    dpkg --ignore-depends=libicu74 -i powershell_7.5.2-1.deb_amd64.deb
+
+## Cleanup
+RUN rm powershell_7.5.2-1.deb_amd64.deb
+
+# Install Google Fonts
+
+RUN wget "https://github.com/google/fonts/archive/main.tar.gz" -O google-fonts.tar.gz
+RUN tar -zxvf google-fonts.tar.gz && \
+    mkdir -p /usr/share/fonts/truetype/google-fonts && \
+    find $PWD/fonts-main/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; && \
+    fc-cache -f
+RUN rm -r fonts-main
+
+## Cleanup
+RUN rm google-fonts.tar.gz
+
+# Install texlive, this is last so that different profiles share the above layers
 ARG TEXLIVE_PROFILE=./profiles/texlive-small.profile
 
 ADD ${TEXLIVE_PROFILE} texlive.profile
@@ -77,28 +115,6 @@ ENV PATH="/usr/local/texlive/bin/x86_64-linux:${PATH}"
 RUN tlmgr init-usertree
 RUN tlmgr info --only-installed
 RUN tlmgr update --self --all --reinstall-forcibly-removed
-
-# install drawio
-
-ARG drawio_ver="20.7.4"
-
-RUN curl -LO https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/drawio-amd64-${drawio_ver}.deb && \
-    dpkg -i drawio-amd64-${drawio_ver}.deb
-    
-## cleanup
-RUN rm drawio-amd64-${drawio_ver}.deb
-
-RUN chmod +4755 /opt/drawio/chrome-sandbox
-
-RUN echo "#!/bin/sh\nxvfb-run /usr/bin/drawio \"\${@}\"" > /usr/local/bin/drawio && \
-    chmod +x /usr/local/bin/drawio
-
-# Add powershell 7.4, using deb package
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.2/powershell_7.4.2-1.deb_amd64.deb && \
-    dpkg -i powershell_7.4.2-1.deb_amd64.deb
-
-## Cleanup
-RUN rm powershell_7.4.2-1.deb_amd64.deb
 
 # Set the default user as non-root
 USER $USERNAME
